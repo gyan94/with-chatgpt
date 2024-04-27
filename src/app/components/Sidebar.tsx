@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { db } from "../firebase";
 import { unsubscribe } from "diagnostics_channel";
+import { useAppContext } from "../context/AppContext";
 
 /**
  * [CSS補足]
@@ -26,13 +27,14 @@ type Room = {
 
 const Sidebar = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const { user, userId } = useAppContext();
 
   useEffect(() => {
     const fetchRooms = async () => {
       const roomCollectionRef = collection(db, "rooms");
       const q = query(
         roomCollectionRef,
-        where("userId", "==", "Q6N6Kirgetb0tRzYARV5ILxB1T73"),
+        where("userId", "==", userId),
         orderBy("createdAt")
       );
       const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -49,7 +51,7 @@ const Sidebar = () => {
       });
     };
     fetchRooms();
-  }, []);
+  }, [userId]);
 
   return (
     <div className="bg-custom-blue h-full overflow-y-auto px-5 flex-col flex">
